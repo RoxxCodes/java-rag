@@ -1,0 +1,27 @@
+# NOTE: Using existing PostgreSQL container (tribe-pg) instead of creating a new one.
+# The existing PostgreSQL on port 5432 has been configured with pgvector extension.
+#
+# To use a dedicated PostgreSQL for this project instead, uncomment the services below:
+
+# version: '3.8'
+#
+# services:
+#   postgres:
+#     image: ankane/pgvector:latest
+#     container_name: rag-postgres
+#     environment:
+#       POSTGRES_DB: ragdb
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: password
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#
+# volumes:
+#   postgres_data:
