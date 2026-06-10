@@ -28,8 +28,7 @@ llm:
 # Google AI Gemini Configuration (Free tier: 60 requests/minute)
 # Get your API key from: https://aistudio.google.com/app/apikey
 google:
-  api-key: ${key}
-  model: gemini-2.0-flash
+  api-key: {API_KEY}
 
 # OpenAI Configuration (Optional - only used if llm.provider=openai)
 # Set both GOOGLE_API_KEY and OPENAI_API_KEY to switch between them at runtime

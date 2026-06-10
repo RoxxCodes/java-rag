@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
-
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
@@ -22,6 +20,15 @@ public class LangChainConfig {
 
     @Value("${llm.embedding-dimension:384}")
     private int embeddingDimension;
+
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
 
     @Bean
     public EmbeddingModel embeddingModel() {
@@ -36,10 +43,22 @@ public class LangChainConfig {
     }
 
     @Bean
-    public EmbeddingStore embeddingStore(DataSource dataSource) {
+    public EmbeddingStore embeddingStore() {
         log.info("Creating embedding store with dimension: {}", embeddingDimension);
+        // Parse host and port from JDBC URL (format: jdbc:postgresql://host:port/database)
+        String url = jdbcUrl.replace("jdbc:postgresql://", "");
+        String[] hostPortAndDb = url.split("/");
+        String[] hostAndPort = hostPortAndDb[0].split(":");
+        String host = hostAndPort[0];
+        int port = hostAndPort.length > 1 ? Integer.parseInt(hostAndPort[1]) : 5432;
+        String database = hostPortAndDb.length > 1 ? hostPortAndDb[1] : "ragdb";
+
         return PgVectorEmbeddingStore.builder()
-                .dataSource(dataSource)
+                .host(host)
+                .port(port)
+                .database(database)
+                .user(username)
+                .password(password)
                 .table("embeddings")
                 .dimension(embeddingDimension)
                 .build();
